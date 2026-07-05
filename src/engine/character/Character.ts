@@ -46,19 +46,27 @@ export interface Character {
   readonly id: string;
 
   /**
-   * The character's chosen name
+   * The character's display name
    * Can be changed through in-game systems
    * Minimum length: 1, Maximum length: 100
    */
   readonly name: string;
 
   /**
-   * Unique username/handle for the character
-   * Cannot be changed after creation
-   * Minimum length: 3, Maximum length: 50
-   * Pattern: alphanumeric, hyphens, underscores
+   * The character's preferred name for intimate contexts
+   * Used for personal interactions and internal monologue
+   * Can differ from the display name
+   * Optional; can be empty string
+   * Minimum length: 0, Maximum length: 100
    */
-  readonly handle: string;
+  readonly preferredName: string;
+
+  /**
+   * Character pronouns for dialogue and narrative
+   * Examples: "they/them", "she/her", "he/him", "xe/xem"
+   * Minimum length: 1, Maximum length: 50
+   */
+  readonly pronouns: string;
 
   /**
    * Brief tagline or epithet for the character
@@ -69,8 +77,23 @@ export interface Character {
   readonly title: string;
 
   /**
+   * Character's date of birth in the realm
+   * ISO 8601 format: "2026-07-05" or full timestamp
+   * Influences perceived age and maturity
+   */
+  readonly birthDate: string;
+
+  /**
+   * Character's origin or homeland
+   * Where they come from in the world
+   * Can be a region, city, or significant location
+   * Maximum length: 200
+   */
+  readonly origin: string;
+
+  /**
    * Character's visual appearance model
-   * Defines physical characteristics, cosmetics, equipment appearance
+   * Defines physical characteristics, cosmetics, distinctive features
    */
   readonly appearance: CharacterAppearance;
 
@@ -88,7 +111,7 @@ export interface Character {
 
   /**
    * Character's gallery model
-   * Collection of moments, memories, and visual history
+   * Organized collection of character moments, memories, and visual history
    */
   readonly gallery: CharacterGallery;
 
@@ -104,13 +127,6 @@ export interface Character {
    * Updated whenever any character property changes
    */
   readonly updatedAt: string;
-
-  /**
-   * Current game/realm the character is in
-   * UUID or reference string
-   * Null if character is not currently in a realm
-   */
-  readonly currentRealmId: string | null;
 
   /**
    * Flags for character status and features
@@ -132,28 +148,9 @@ export interface CharacterFlags {
   readonly isOnboarded: boolean;
 
   /**
-   * Whether the character is currently active/online
-   */
-  readonly isActive: boolean;
-
-  /**
-   * Whether the character's name is hidden from public listings
-   */
-  readonly isPrivate: boolean;
-
-  /**
-   * Whether the character's account is suspended or restricted
-   */
-  readonly isRestricted: boolean;
-
-  /**
-   * Whether the character is a test/development character
-   */
-  readonly isTestCharacter: boolean;
-
-  /**
-   * Custom flags for future features
+   * Custom flags for future features and extensibility
    * Key-value pairs for extensible boolean states
+   * Examples: { "hasCompletedFirstQuest": true, "isBeta": false }
    */
   readonly customFlags: Record<string, boolean>;
 }
@@ -166,8 +163,11 @@ export interface CharacterFlags {
  */
 export interface CharacterCreationInput {
   readonly name: string;
-  readonly handle: string;
+  readonly preferredName?: string;
+  readonly pronouns: string;
   readonly title?: string;
+  readonly birthDate: string;
+  readonly origin: string;
   readonly appearance?: Partial<CharacterAppearance>;
   readonly personality?: Partial<CharacterPersonality>;
   readonly biography?: Partial<CharacterBiography>;
@@ -181,7 +181,11 @@ export interface CharacterCreationInput {
  */
 export interface CharacterUpdateInput {
   readonly name?: string;
+  readonly preferredName?: string;
+  readonly pronouns?: string;
   readonly title?: string;
+  readonly birthDate?: string;
+  readonly origin?: string;
   readonly appearance?: Partial<CharacterAppearance>;
   readonly personality?: Partial<CharacterPersonality>;
   readonly biography?: Partial<CharacterBiography>;
